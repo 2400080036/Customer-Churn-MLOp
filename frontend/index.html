@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer Churn Prediction</title>
+</head>
+
+<body>
+
+<h1>Customer Churn Prediction</h1>
+
+<label>Gender (0/1)</label><br>
+<input id="gender" type="number"><br><br>
+
+<label>Senior Citizen (0/1)</label><br>
+<input id="senior" type="number"><br><br>
+
+<label>Tenure</label><br>
+<input id="tenure" type="number"><br><br>
+
+<label>Monthly Charges</label><br>
+<input id="charges" type="number" step="0.01"><br><br>
+
+<label>Contract (0/1)</label><br>
+<input id="contract" type="number"><br><br>
+
+<label>Internet Service (0/1)</label><br>
+<input id="internet" type="number"><br><br>
+
+<button onclick="predict()">Predict Churn</button>
+
+<h2 id="result"></h2>
+
+<script>
+async function predict() {
+
+    const data = {
+        gender: Number(document.getElementById("gender").value),
+        senior_citizen: Number(document.getElementById("senior").value),
+        tenure: Number(document.getElementById("tenure").value),
+        monthly_charges: Number(document.getElementById("charges").value),
+        contract: Number(document.getElementById("contract").value),
+        internet_service: Number(document.getElementById("internet").value)
+    };
+
+    document.getElementById("result").innerText = "Predicting...";
+
+    try {
+
+        const response = await fetch("http://127.0.0.1:8000/predict", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            document.getElementById("result").innerText =
+                "Error: " + JSON.stringify(result);
+            return;
+        }
+
+        document.getElementById("result").innerText =
+            result.result + " (Prediction: " + result.prediction + ")";
+
+    } catch (error) {
+
+        document.getElementById("result").innerText =
+            "Connection Error: " + error.message;
+    }
+}
+</script>
+
+</body>
+</html>

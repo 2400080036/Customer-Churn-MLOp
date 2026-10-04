@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Prediction Result</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        /* HEADER */
+
+        .header {
+            background: #111827;
+            color: white;
+            padding: 20px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo {
+            width: 48px;
+            height: 48px;
+            background: #2563eb;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .brand h1 {
+            font-size: 21px;
+        }
+
+        .brand p {
+            color: #9ca3af;
+            font-size: 12px;
+            margin-top: 3px;
+        }
+
+        .system-status {
+            color: #d1fae5;
+            font-size: 13px;
+        }
+
+        /* CONTAINER */
+
+        .container {
+            width: 90%;
+            max-width: 750px;
+            margin: 45px auto;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 35px;
+            box-shadow: 0 5px 20px rgba(15, 23, 42, 0.07);
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .title h2 {
+            font-size: 25px;
+            color: #111827;
+            margin-bottom: 6px;
+        }
+
+        .title p {
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        /* RESULT */
+
+        .prediction-box {
+            text-align: center;
+            padding: 30px;
+            border-radius: 14px;
+            margin-bottom: 25px;
+        }
+
+        .prediction-box.high {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+        }
+
+        .prediction-box.medium {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+        }
+
+        .prediction-box.low {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+        }
+
+        .prediction-box h2 {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .high h2 {
+            color: #dc2626;
+        }
+
+        .medium h2 {
+            color: #d97706;
+        }
+
+        .low h2 {
+            color: #059669;
+        }
+
+        .prediction-box p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        /* PROBABILITY */
+
+        .risk-section {
+            margin-top: 25px;
+        }
+
+        .risk-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .risk-header span:last-child {
+            font-weight: bold;
+        }
+
+        .progress {
+            height: 12px;
+            width: 100%;
+            background: #e5e7eb;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: #2563eb;
+            transition: width 0.8s ease;
+        }
+
+        /* ASSESSMENT */
+
+        .assessment {
+            margin-top: 25px;
+            padding: 18px;
+            background: #f9fafb;
+            border-radius: 10px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #6b7280;
+        }
+
+        .assessment strong {
+            color: #374151;
+        }
+
+        /* BUTTONS */
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .buttons button {
+            flex: 1;
+            padding: 13px;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .back-btn {
+            border: 1px solid #d1d5db;
+            background: white;
+            color: #374151;
+        }
+
+        .back-btn:hover {
+            background: #f3f4f6;
+        }
+
+        .home-btn {
+            border: none;
+            background: #2563eb;
+            color: white;
+        }
+
+        .home-btn:hover {
+            background: #1d4ed8;
+        }
+
+        /* FOOTER */
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+        @media (max-width: 650px) {
+
+            .system-status {
+                display: none;
+            }
+
+            .card {
+                padding: 22px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- HEADER -->
+
+    <header class="header">
+
+        <div class="brand">
+
+            <div class="logo">
+                CC
+            </div>
+
+            <div>
+
+                <h1>
+                    Customer Churn Prediction System
+                </h1>
+
+                <p>
+                    Machine Learning Based Customer Churn Prediction
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="system-status">
+            ● System Online
+        </div>
+
+    </header>
+
+
+    <!-- RESULT -->
+
+    <main class="container">
+
+        <section class="card">
+
+
+            <div class="title">
+
+                <h2>
+                    Prediction Result
+                </h2>
+
+                <p>
+                    Machine learning model prediction
+                </p>
+
+            </div>
+
+
+            <!-- PREDICTION -->
+
+            <div
+                id="predictionBox"
+                class="prediction-box"
+            >
+
+                <h2 id="predictionText">
+                    Loading...
+                </h2>
+
+                <p id="predictionDescription">
+                    Processing prediction result...
+                </p>
+
+            </div>
+
+
+            <!-- PROBABILITY -->
+
+            <div class="risk-section">
+
+                <div class="risk-header">
+
+                    <span>
+                        Churn Probability
+                    </span>
+
+                    <span id="riskPercentage">
+                        --
+                    </span>
+
+                </div>
+
+
+                <div class="progress">
+
+                    <div
+                        id="riskBar"
+                        class="progress-bar"
+                    >
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ASSESSMENT -->
+
+            <div class="assessment">
+
+                <strong>
+                    Assessment:
+                </strong>
+
+                <span id="assessmentText">
+                    --
+                </span>
+
+            </div>
+
+
+            <!-- BUTTONS -->
+
+            <div class="buttons">
+
+                <button
+                    class="back-btn"
+                    onclick="goBack()"
+                >
+                    ← New Prediction
+                </button>
+
+                <button
+                    class="home-btn"
+                    onclick="goHome()"
+                >
+                    🏠 Home
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+
+        Customer Churn Prediction System
+        •
+        Machine Learning Based Prediction
+
+    </footer>
+
+
+    <script>
+
+        function loadResult() {
+
+
+            const storedResult =
+                sessionStorage.getItem(
+                    "churnResult"
+                );
+
+
+            if (!storedResult) {
+
+                document.getElementById(
+                    "predictionText"
+                ).innerText =
+                    "No Prediction Available";
+
+                document.getElementById(
+                    "predictionDescription"
+                ).innerText =
+                    "Please enter customer information first.";
+
+                return;
+
+            }
+
+
+            const result =
+                JSON.parse(storedResult);
+
+
+            const prediction =
+                Number(result.prediction);
+
+
+            let risk;
+
+
+            // USE MODEL PROBABILITY
+
+            if (
+                result.probability !== undefined
+            ) {
+
+                risk =
+                    Number(result.probability)
+                    * 100;
+
+            }
+
+            else {
+
+                risk =
+                    prediction === 1
+                        ? 80
+                        : 20;
+
+            }
+
+
+            risk =
+                Math.max(
+                    0,
+                    Math.min(
+                        100,
+                        risk
+                    )
+                );
+
+
+            let riskLevel;
+
+            let description;
+
+            let assessment;
+
+
+            // HIGH
+
+            if (risk >= 70) {
+
+                riskLevel =
+                    "High Churn Risk";
+
+                description =
+                    "The customer has a high likelihood of leaving the service.";
+
+                assessment =
+                    "Consider proactive retention offers, customer support follow-up, and targeted customer engagement.";
+
+            }
+
+
+            // MEDIUM
+
+            else if (risk >= 40) {
+
+                riskLevel =
+                    "Medium Churn Risk";
+
+                description =
+                    "The customer shows some indicators associated with churn.";
+
+                assessment =
+                    "Monitor the customer and consider proactive engagement.";
+
+            }
+
+
+            // LOW
+
+            else {
+
+                riskLevel =
+                    "Low Churn Risk";
+
+                description =
+                    "The customer is currently unlikely to churn.";
+
+                assessment =
+                    "Continue regular customer engagement and monitoring.";
+
+            }
+
+
+            // DISPLAY
+
+            document.getElementById(
+                "predictionText"
+            ).innerText =
+                riskLevel;
+
+
+            document.getElementById(
+                "predictionDescription"
+            ).innerText =
+                description;
+
+
+            document.getElementById(
+                "riskPercentage"
+            ).innerText =
+                risk.toFixed(1) + "%";
+
+
+            document.getElementById(
+                "riskBar"
+            ).style.width =
+                risk + "%";
+
+
+            document.getElementById(
+                "assessmentText"
+            ).innerText =
+                assessment;
+
+
+            // CLASS
+
+            const box =
+                document.getElementById(
+                    "predictionBox"
+                );
+
+
+            box.classList.remove(
+                "high",
+                "medium",
+                "low"
+            );
+
+
+            if (risk >= 70) {
+
+                box.classList.add("high");
+
+            }
+
+            else if (risk >= 40) {
+
+                box.classList.add("medium");
+
+            }
+
+            else {
+
+                box.classList.add("low");
+
+            }
+
+        }
+
+
+        function goBack() {
+
+            window.location.href =
+                "/prediction.html";
+
+        }
+
+
+        function goHome() {
+
+            sessionStorage.removeItem(
+                "churnResult"
+            );
+
+            window.location.href =
+                "/";
+
+        }
+
+
+        loadResult();
+
+    </script>
+
+
+</body>
+
+</html>

@@ -1,77 +1,367 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>Customer Churn Prediction</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Customer Churn Prediction System</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #f4f7fb;
+            color: #1f2937;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* HEADER */
+
+        .header {
+            background: #111827;
+            color: white;
+            padding: 20px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo {
+            width: 48px;
+            height: 48px;
+            background: #2563eb;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .brand h1 {
+            font-size: 21px;
+        }
+
+        .brand p {
+            color: #9ca3af;
+            font-size: 12px;
+            margin-top: 3px;
+        }
+
+        .system-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #d1fae5;
+        }
+
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            background: #22c55e;
+            border-radius: 50%;
+        }
+
+        /* MAIN */
+
+        .hero {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 50px 20px;
+        }
+
+        .welcome-card {
+            background: white;
+            width: 100%;
+            max-width: 850px;
+            text-align: center;
+            padding: 60px 40px;
+            border-radius: 20px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08);
+        }
+
+        .welcome-icon {
+            width: 90px;
+            height: 90px;
+            background: #eff6ff;
+            color: #2563eb;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 40px;
+            font-weight: bold;
+        }
+
+        .welcome-card h2 {
+            font-size: 34px;
+            color: #111827;
+            margin-bottom: 12px;
+        }
+
+        .welcome-card .subtitle {
+            font-size: 17px;
+            color: #6b7280;
+            margin-bottom: 15px;
+        }
+
+        .description {
+            max-width: 650px;
+            margin: 0 auto 35px;
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        /* FEATURES */
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 35px;
+        }
+
+        .feature {
+            padding: 18px;
+            background: #f9fafb;
+            border-radius: 12px;
+        }
+
+        .feature h4 {
+            color: #111827;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .feature p {
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+        /* BUTTON */
+
+        .start-btn {
+            border: none;
+            background: #2563eb;
+            color: white;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .start-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        /* FOOTER */
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 700px) {
+
+            .system-status {
+                display: none;
+            }
+
+            .welcome-card {
+                padding: 40px 20px;
+            }
+
+            .welcome-card h2 {
+                font-size: 26px;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
 </head>
+
 
 <body>
 
-<h1>Customer Churn Prediction</h1>
 
-<label>Gender (0/1)</label><br>
-<input id="gender" type="number"><br><br>
+    <!-- HEADER -->
 
-<label>Senior Citizen (0/1)</label><br>
-<input id="senior" type="number"><br><br>
+    <header class="header">
 
-<label>Tenure</label><br>
-<input id="tenure" type="number"><br><br>
+        <div class="brand">
 
-<label>Monthly Charges</label><br>
-<input id="charges" type="number" step="0.01"><br><br>
+            <div class="logo">
+                CC
+            </div>
 
-<label>Contract (0/1)</label><br>
-<input id="contract" type="number"><br><br>
+            <div>
 
-<label>Internet Service (0/1)</label><br>
-<input id="internet" type="number"><br><br>
+                <h1>
+                    Customer Churn Prediction System
+                </h1>
 
-<button onclick="predict()">Predict Churn</button>
+                <p>
+                    Machine Learning Based Customer Churn Prediction
+                </p>
 
-<h2 id="result"></h2>
+            </div>
 
-<script>
-async function predict() {
+        </div>
 
-    const data = {
-        gender: Number(document.getElementById("gender").value),
-        senior_citizen: Number(document.getElementById("senior").value),
-        tenure: Number(document.getElementById("tenure").value),
-        monthly_charges: Number(document.getElementById("charges").value),
-        contract: Number(document.getElementById("contract").value),
-        internet_service: Number(document.getElementById("internet").value)
-    };
 
-    document.getElementById("result").innerText = "Predicting...";
+        <div class="system-status">
 
-    try {
+            <span class="status-dot"></span>
 
-        const response = await fetch("http://127.0.0.1:8000/predict", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        });
+            System Online
 
-        const result = await response.json();
+        </div>
 
-        if (!response.ok) {
-            document.getElementById("result").innerText =
-                "Error: " + JSON.stringify(result);
-            return;
+    </header>
+
+
+    <!-- WELCOME -->
+
+    <main class="hero">
+
+        <section class="welcome-card">
+
+            <div class="welcome-icon">
+                CC
+            </div>
+
+            <h2>
+                Welcome
+            </h2>
+
+            <p class="subtitle">
+                Customer Churn Prediction System
+            </p>
+
+            <p class="description">
+
+                This application uses a machine learning model
+                to analyze customer information and predict the
+                likelihood of customer churn.
+
+            </p>
+
+
+            <!-- FEATURES -->
+
+            <div class="features">
+
+                <div class="feature">
+
+                    <h4>
+                        Machine Learning
+                    </h4>
+
+                    <p>
+                        ML-based churn prediction
+                    </p>
+
+                </div>
+
+
+                <div class="feature">
+
+                    <h4>
+                        Risk Analysis
+                    </h4>
+
+                    <p>
+                        Customer churn risk assessment
+                    </p>
+
+                </div>
+
+
+                <div class="feature">
+
+                    <h4>
+                        Prediction
+                    </h4>
+
+                    <p>
+                        Churn probability estimation
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- START BUTTON -->
+
+            <button
+                class="start-btn"
+                onclick="startPrediction()"
+            >
+
+                Start Prediction →
+
+            </button>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+
+        Customer Churn Prediction System
+        •
+        Machine Learning Based Prediction
+
+    </footer>
+
+
+    <script>
+
+        function startPrediction() {
+
+            window.location.href = "/prediction.html";
+
         }
 
-        document.getElementById("result").innerText =
-            result.result + " (Prediction: " + result.prediction + ")";
+    </script>
 
-    } catch (error) {
-
-        document.getElementById("result").innerText =
-            "Connection Error: " + error.message;
-    }
-}
-</script>
 
 </body>
+
 </html>

@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Result</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f6fc;
+            text-align: center;
+            padding: 40px 15px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+        }
+        h1 { color: #2457d6; }
+        #prediction {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 30px 0;
+        }
+        button {
+            background: #2457d6;
+            color: white;
+            padding: 13px 24px;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Prediction Result</h1>
+
+    <p>Your Customer Churn Prediction is:</p>
+
+    <div id="prediction">Loading...</div>
+
+    <div id="probability"></div>
+    <div id="risk"></div>
+
+    <br><br>
+
+    <button onclick="window.location.href='/customer'">
+        Predict Another Customer
+    </button>
+
+    <br><br>
+
+    <a href="/">Back to Home</a>
+</div>
+
+<script>
+const savedResult = sessionStorage.getItem("predictionResult");
+
+if (savedResult) {
+    const data = JSON.parse(savedResult);
+
+    document.getElementById("prediction").textContent =
+        data.result ?? data.prediction ?? data.churn_prediction ?? "Prediction received";
+
+    if (data.probability !== undefined) {
+        let probability = Number(data.probability);
+        if (probability <= 1) probability *= 100;
+
+        document.getElementById("probability").textContent =
+            "Churn Probability: " + probability.toFixed(2) + "%";
+    }
+
+    document.getElementById("risk").textContent =
+        data.risk_level ? "Risk Level: " + data.risk_level : "";
+
+} else {
+    document.getElementById("prediction").textContent =
+        "No prediction available. Please enter customer details first.";
+}
+</script>
+
+</body>
+</html>

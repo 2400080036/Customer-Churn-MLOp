@@ -1,0 +1,10 @@
+.venv/
+.idea/
+__pycache__/
+.pytest_cache/
+*.pyc
+mlflow.db
+mlruns/
+logs/
+models/candidate/
+models/archive/

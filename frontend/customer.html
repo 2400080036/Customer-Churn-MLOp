@@ -1,0 +1,202 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f6fc;
+            margin: 0;
+            padding: 30px;
+        }
+        .container {
+            max-width: 850px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+        }
+        h1 {
+            color: #2457d6;
+            text-align: center;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #2457d6;
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            border-radius: 7px;
+            cursor: pointer;
+            margin-top: 25px;
+        }
+        @media(max-width:600px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Customer Details</h1>
+
+    <form id="customerForm">
+        <div class="grid">
+
+            <div>
+                <label>Gender</label>
+                <select name="gender">
+                    <option>Female</option>
+                    <option>Male</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Senior Citizen</label>
+                <select name="senior_citizen">
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Partner</label>
+                <select name="partner">
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Dependents</label>
+                <select name="dependents">
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Tenure</label>
+                <input type="number" name="tenure" value="12" min="0" required>
+            </div>
+
+            <div>
+                <label>Monthly Charges</label>
+                <input type="number" name="monthly_charges" value="70" min="0" step="0.01" required>
+            </div>
+
+            <div>
+                <label>Internet Service</label>
+                <select name="internet_service">
+                    <option>DSL</option>
+                    <option>Fiber optic</option>
+                    <option>No</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Contract</label>
+                <select name="contract">
+                    <option>Month-to-month</option>
+                    <option>One year</option>
+                    <option>Two year</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Online Security</label>
+                <select name="online_security">
+                    <option>Yes</option>
+                    <option>No</option>
+                    <option>No internet service</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Tech Support</label>
+                <select name="tech_support">
+                    <option>Yes</option>
+                    <option>No</option>
+                    <option>No internet service</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Paperless Billing</label>
+                <select name="paperless_billing">
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Payment Method</label>
+                <select name="payment_method">
+                    <option>Electronic check</option>
+                    <option>Mailed check</option>
+                    <option>Bank transfer (automatic)</option>
+                    <option>Credit card (automatic)</option>
+                </select>
+            </div>
+
+        </div>
+
+        <button type="submit">Predict Churn</button>
+        <p id="error" style="color:red;"></p>
+    </form>
+</div>
+
+<script>
+document.getElementById("customerForm").addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData.entries());
+
+    data.senior_citizen = Number(data.senior_citizen);
+    data.tenure = Number(data.tenure);
+    data.monthly_charges = Number(data.monthly_charges);
+
+    try {
+        const response = await fetch("/predict", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.detail || "Prediction failed");
+        }
+
+        sessionStorage.setItem("predictionResult", JSON.stringify(result));
+        window.location.href = "/result";
+
+    } catch (error) {
+        document.getElementById("error").textContent = error.message;
+    }
+});
+</script>
+
+</body>
+</html>

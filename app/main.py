@@ -4,11 +4,14 @@ import sys
 import logging
 import webbrowser
 import threading
+import json
+import pandas as pd
+
 from typing import Literal
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 import uvicorn
 
 
@@ -23,6 +26,10 @@ FRONTEND_DIR = BASE_DIR / "frontend"
 INDEX_PATH = FRONTEND_DIR / "index.html"
 CUSTOMER_PATH = FRONTEND_DIR / "customer.html"
 RESULT_PATH = FRONTEND_DIR / "result.html"
+
+DATA_PATH = BASE_DIR / "data" / "customer_churn.csv"
+METADATA_PATH = BASE_DIR / "models" / "metadata.json"
+PREDICTION_LOG_PATH = BASE_DIR / "logs" / "predictions.csv"
 
 sys.path.insert(0, str(BASE_DIR))
 
@@ -58,6 +65,42 @@ except Exception as error:
 
 
 # =====================================================
+# LOAD MODEL METADATA
+# =====================================================
+
+def load_metadata():
+    if not METADATA_PATH.is_file():
+        logger.warning("Model metadata file not found")
+        return {}
+
+    try:
+        with open(METADATA_PATH, "r", encoding="utf-8") as file:
+            return json.load(file)
+    except Exception:
+        logger.exception("Unable to load model metadata")
+        return {}
+
+
+def get_row_count(metadata):
+    # Prefer the actual dataset row count.
+    if DATA_PATH.is_file():
+        try:
+            return int(len(pd.read_csv(DATA_PATH)))
+        except Exception:
+            logger.exception("Unable to read training dataset")
+
+    # Use metadata only if the dataset is unavailable.
+    for key in ("rows", "n_rows", "total_rows", "train_rows"):
+        if key in metadata:
+            try:
+                return int(metadata[key])
+            except (TypeError, ValueError):
+                pass
+
+    return 0
+
+
+# =====================================================
 # FASTAPI APPLICATION
 # =====================================================
 
@@ -78,8 +121,9 @@ class CustomerData(BaseModel):
     senior_citizen: Literal[0, 1]
     partner: Literal["Yes", "No"]
     dependents: Literal["Yes", "No"]
-    tenure: int
-    monthly_charges: float
+
+    tenure: int = Field(ge=0)
+    monthly_charges: float = Field(ge=0)
 
     internet_service: Literal[
         "DSL",
@@ -125,7 +169,6 @@ class CustomerData(BaseModel):
 def serve_page(file_path):
 
     if not file_path.is_file():
-
         logger.error("Frontend file missing: %s", file_path)
 
         raise HTTPException(
@@ -144,7 +187,7 @@ def serve_page(file_path):
 
 
 # =====================================================
-# HOME PAGE
+# FRONTEND ROUTES
 # =====================================================
 
 @app.get("/")
@@ -152,18 +195,10 @@ def home():
     return serve_page(INDEX_PATH)
 
 
-# =====================================================
-# CUSTOMER PAGE
-# =====================================================
-
 @app.get("/customer")
 def customer_page():
     return serve_page(CUSTOMER_PATH)
 
-
-# =====================================================
-# RESULT PAGE
-# =====================================================
 
 @app.get("/result")
 def result_page():
@@ -178,7 +213,7 @@ def result_page():
 def health_check():
 
     return {
-        "status": "running",
+        "status": "ok",
         "model_status": MODEL_STATUS,
         "frontend_files": {
             "index.html": INDEX_PATH.is_file(),
@@ -195,11 +230,15 @@ def health_check():
 @app.get("/model-info")
 def model_info():
 
+    metadata = load_metadata()
+
     return {
         "project": "Customer Churn Prediction System",
         "model_status": MODEL_STATUS,
         "model_loaded": predictor is not None,
-        "model_error": IMPORT_ERROR
+        "model_error": IMPORT_ERROR,
+        "rows": get_row_count(metadata),
+        "test_metrics": metadata.get("test_metrics", {})
     }
 
 
@@ -217,7 +256,28 @@ def monitoring():
         )
 
     try:
-        report = drift_report()
+        metadata = load_metadata()
+
+        baseline = metadata.get("drift_baseline")
+
+        if baseline is None:
+            baseline = metadata.get("baseline")
+
+        if not baseline:
+            return {
+                "status": "NOT_CONFIGURED",
+                "message": "Drift baseline is not available in model metadata."
+            }
+
+        if PREDICTION_LOG_PATH.is_file():
+            recent = pd.read_csv(PREDICTION_LOG_PATH)
+        else:
+            recent = pd.DataFrame()
+
+        report = drift_report(
+            baseline=baseline,
+            recent=recent
+        )
 
         return {
             "status": "success",
@@ -269,14 +329,12 @@ def predict_churn(customer: CustomerData):
         )
 
     try:
-
         customer_data = customer.model_dump()
         result = predictor.predict(customer_data)
 
         return result
 
     except Exception as error:
-
         logger.exception("Prediction failed")
 
         raise HTTPException(
@@ -309,19 +367,12 @@ if __name__ == "__main__":
     print("\nFRONTEND DIRECTORY:")
     print(FRONTEND_DIR)
 
-    print("\nFRONTEND FILE CHECK:")
-
-    print("index.html:", INDEX_PATH.is_file())
-    print("customer.html:", CUSTOMER_PATH.is_file())
-    print("result.html:", RESULT_PATH.is_file())
-
     print("\nMODEL STATUS:", MODEL_STATUS)
 
     if IMPORT_ERROR:
         print("MODEL ERROR:", IMPORT_ERROR)
 
     print("\nAPPLICATION URLS:")
-
     print("Welcome:  http://127.0.0.1:8000/")
     print("Customer: http://127.0.0.1:8000/customer")
     print("Result:   http://127.0.0.1:8000/result")
@@ -330,10 +381,8 @@ if __name__ == "__main__":
 
     print("\n" + "=" * 55)
 
-    # Open browser automatically after 2 seconds
     threading.Timer(2.0, open_browser).start()
 
-    # Start FastAPI server
     uvicorn.run(
         app,
         host="127.0.0.1",

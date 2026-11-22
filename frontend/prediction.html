@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Customer Information</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        /* HEADER */
+
+        .header {
+            background: #111827;
+            color: white;
+            padding: 20px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo {
+            width: 48px;
+            height: 48px;
+            background: #2563eb;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .brand h1 {
+            font-size: 21px;
+        }
+
+        .brand p {
+            color: #9ca3af;
+            font-size: 12px;
+            margin-top: 3px;
+        }
+
+        .system-status {
+            color: #d1fae5;
+            font-size: 13px;
+        }
+
+        /* CONTAINER */
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin: 45px auto;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 5px 20px rgba(15, 23, 42, 0.07);
+        }
+
+        .card-title {
+            margin-bottom: 28px;
+        }
+
+        .card-title h2 {
+            font-size: 24px;
+            color: #111827;
+            margin-bottom: 6px;
+        }
+
+        .card-title p {
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        /* FORM */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 9px;
+            background: #f9fafb;
+            font-size: 14px;
+            outline: none;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #2563eb;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+        }
+
+        .hint {
+            margin-top: 5px;
+            color: #9ca3af;
+            font-size: 11px;
+        }
+
+        /* BUTTONS */
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .predict-btn,
+        .back-btn {
+            padding: 14px 25px;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .predict-btn {
+            flex: 1;
+            border: none;
+            background: #2563eb;
+            color: white;
+        }
+
+        .predict-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .predict-btn:disabled {
+            background: #93c5fd;
+            cursor: not-allowed;
+        }
+
+        .back-btn {
+            border: 1px solid #d1d5db;
+            background: white;
+            color: #374151;
+        }
+
+        .back-btn:hover {
+            background: #f3f4f6;
+        }
+
+        /* ERROR */
+
+        #errorMessage {
+            display: none;
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            font-size: 13px;
+        }
+
+        /* FOOTER */
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+        @media (max-width: 650px) {
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .system-status {
+                display: none;
+            }
+
+            .card {
+                padding: 22px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- HEADER -->
+
+    <header class="header">
+
+        <div class="brand">
+
+            <div class="logo">
+                CC
+            </div>
+
+            <div>
+
+                <h1>
+                    Customer Churn Prediction System
+                </h1>
+
+                <p>
+                    Machine Learning Based Customer Churn Prediction
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="system-status">
+            ● System Online
+        </div>
+
+    </header>
+
+
+    <!-- MAIN -->
+
+    <main class="container">
+
+        <section class="card">
+
+            <div class="card-title">
+
+                <h2>
+                    Customer Information
+                </h2>
+
+                <p>
+                    Customer details used for churn prediction.
+                </p>
+
+            </div>
+
+
+            <div class="form-grid">
+
+
+                <!-- GENDER -->
+
+                <div class="form-group">
+
+                    <label for="gender">
+                        Gender
+                    </label>
+
+                    <select id="gender">
+
+                        <option value="">
+                            Select gender
+                        </option>
+
+                        <option value="0">
+                            Female
+                        </option>
+
+                        <option value="1">
+                            Male
+                        </option>
+
+                    </select>
+
+                    <span class="hint">
+                        Customer gender
+                    </span>
+
+                </div>
+
+
+                <!-- SENIOR CITIZEN -->
+
+                <div class="form-group">
+
+                    <label for="senior">
+                        Senior Citizen
+                    </label>
+
+                    <select id="senior">
+
+                        <option value="">
+                            Select option
+                        </option>
+
+                        <option value="0">
+                            No
+                        </option>
+
+                        <option value="1">
+                            Yes
+                        </option>
+
+                    </select>
+
+                    <span class="hint">
+                        Senior citizen status
+                    </span>
+
+                </div>
+
+
+                <!-- TENURE -->
+
+                <div class="form-group">
+
+                    <label for="tenure">
+                        Tenure (Months)
+                    </label>
+
+                    <input
+                        id="tenure"
+                        type="number"
+                        min="0"
+                        placeholder="Example: 24"
+                    >
+
+                    <span class="hint">
+                        Number of months with the company
+                    </span>
+
+                </div>
+
+
+                <!-- MONTHLY CHARGES -->
+
+                <div class="form-group">
+
+                    <label for="charges">
+                        Monthly Charges
+                    </label>
+
+                    <input
+                        id="charges"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="Example: 65.50"
+                    >
+
+                    <span class="hint">
+                        Monthly billing amount
+                    </span>
+
+                </div>
+
+
+                <!-- CONTRACT -->
+
+                <div class="form-group">
+
+                    <label for="contract">
+                        Contract Type
+                    </label>
+
+                    <select id="contract">
+
+                        <option value="">
+                            Select contract
+                        </option>
+
+                        <option value="0">
+                            Month-to-Month
+                        </option>
+
+                        <option value="1">
+                            One Year
+                        </option>
+
+                    </select>
+
+                    <span class="hint">
+                        Customer contract
+                    </span>
+
+                </div>
+
+
+                <!-- INTERNET -->
+
+                <div class="form-group">
+
+                    <label for="internet">
+                        Internet Service
+                    </label>
+
+                    <select id="internet">
+
+                        <option value="">
+                            Select service
+                        </option>
+
+                        <option value="0">
+                            No Internet
+                        </option>
+
+                        <option value="1">
+                            Internet Service
+                        </option>
+
+                    </select>
+
+                    <span class="hint">
+                        Internet service status
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- ERROR -->
+
+            <div id="errorMessage"></div>
+
+
+            <!-- BUTTONS -->
+
+            <div class="buttons">
+
+                <button
+                    class="back-btn"
+                    onclick="goHome()"
+                >
+                    ← Home
+                </button>
+
+                <button
+                    id="predictButton"
+                    class="predict-btn"
+                    onclick="predict()"
+                >
+                    Predict Customer Churn
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+
+        Customer Churn Prediction System
+        •
+        Machine Learning Based Prediction
+
+    </footer>
+
+
+    <script>
+
+        function goHome() {
+
+            window.location.href = "/";
+
+        }
+
+
+        async function predict() {
+
+
+            const button =
+                document.getElementById(
+                    "predictButton"
+                );
+
+            const error =
+                document.getElementById(
+                    "errorMessage"
+                );
+
+
+            error.style.display = "none";
+
+
+            // GET VALUES
+
+            const gender =
+                document.getElementById(
+                    "gender"
+                ).value;
+
+            const senior =
+                document.getElementById(
+                    "senior"
+                ).value;
+
+            const tenure =
+                document.getElementById(
+                    "tenure"
+                ).value;
+
+            const charges =
+                document.getElementById(
+                    "charges"
+                ).value;
+
+            const contract =
+                document.getElementById(
+                    "contract"
+                ).value;
+
+            const internet =
+                document.getElementById(
+                    "internet"
+                ).value;
+
+
+            // VALIDATION
+
+            if (
+                gender === "" ||
+                senior === "" ||
+                tenure === "" ||
+                charges === "" ||
+                contract === "" ||
+                internet === ""
+            ) {
+
+                error.innerText =
+                    "Please complete all customer information.";
+
+                error.style.display = "block";
+
+                return;
+
+            }
+
+
+            // DATA
+
+            const data = {
+
+                gender: Number(gender),
+
+                senior_citizen: Number(senior),
+
+                tenure: Number(tenure),
+
+                monthly_charges: Number(charges),
+
+                contract: Number(contract),
+
+                internet_service: Number(internet)
+
+            };
+
+
+            // BUTTON
+
+            button.disabled = true;
+
+            button.innerText =
+                "Analyzing Customer...";
+
+
+            try {
+
+
+                // API CALL
+
+                const response =
+                    await fetch(
+                        "/predict",
+                        {
+
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify(data)
+
+                        }
+                    );
+
+
+                const result =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        result.detail ||
+                        "Prediction failed."
+                    );
+
+                }
+
+
+                // SAVE RESULT
+
+                sessionStorage.setItem(
+                    "churnResult",
+                    JSON.stringify(result)
+                );
+
+
+                // OPEN RESULT PAGE
+
+                window.location.href =
+                    "/result.html";
+
+            }
+
+
+            catch (err) {
+
+                error.innerText =
+                    "Unable to connect to the prediction service. Make sure the FastAPI server is running.";
+
+                error.style.display = "block";
+
+                console.error(err);
+
+            }
+
+
+            finally {
+
+                button.disabled = false;
+
+                button.innerText =
+                    "Predict Customer Churn";
+
+            }
+
+        }
+
+    </script>
+
+
+</body>
+
+</html>
